@@ -1,12 +1,11 @@
 from urllib.parse import urljoin
 from uuid import UUID
 
-from .base import CapashinoBaseHTTPClient
 from ...core.models import Item
+from .base import CapashinoBaseHTTPClient
 
 
 class CatalogServiceClient(CapashinoBaseHTTPClient):
-
     def __init__(self) -> None:
         super().__init__(
             client_name="Catalog Service", client_url="/api/catalog/items/"

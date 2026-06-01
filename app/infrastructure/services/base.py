@@ -1,13 +1,12 @@
 from typing import Any
 
-from app.config.config import settings
-from httpx import AsyncClient, Timeout, ConnectTimeout, HTTPStatusError
+from httpx import AsyncClient, ConnectTimeout, HTTPStatusError, Timeout
 
-from app.infrastructure.services.exceptions import ProviderTimeout, ProviderError
+from app.config.config import settings
+from app.infrastructure.services.exceptions import ProviderError, ProviderTimeout
 
 
 class CapashinoBaseHTTPClient:
-
     def __init__(self, client_name: str, client_url: str):
         self.__x_api_key = settings.Capashino.X_API_KEY
         self.__base_url = settings.Capashino.BASE_URL
