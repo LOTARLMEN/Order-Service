@@ -11,9 +11,9 @@ from app.core.models import (
 )
 from app.infrastructure.db.database_schemas.order import Order as DBOrder
 from app.infrastructure.db.database_schemas.order import OrderStatus
-from app.infrastructure.repositories.base import BaseRepository
-from app.infrastructure.repositories.exeptions import DoesNotExist
-from app.infrastructure.repositories.order.order_dto import OrderDTO
+from app.infrastructure.db.repositories.base import BaseRepository
+from app.infrastructure.db.repositories.exeptions import DoesNotExist
+from app.infrastructure.db.repositories.order.order_dto import OrderDTO
 
 
 class OrderRepository(BaseRepository):

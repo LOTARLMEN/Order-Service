@@ -9,9 +9,9 @@ from app.core.models import (
     OutboxEventStatus,
 )
 from app.infrastructure.db.database_schemas.outbox import Outbox as DBOutbox
-from app.infrastructure.repositories.base import BaseRepository
-from app.infrastructure.repositories.exeptions import DoesNotExist
-from app.infrastructure.repositories.outbox.outbox_dto import OutboxDTO
+from app.infrastructure.db.repositories.base import BaseRepository
+from app.infrastructure.db.repositories.exeptions import DoesNotExist
+from app.infrastructure.db.repositories.outbox.outbox_dto import OutboxDTO
 
 
 class OutboxRepository(BaseRepository):
