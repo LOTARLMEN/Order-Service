@@ -10,7 +10,7 @@ from app.infrastructure.db.database_schemas.base import Base
 
 
 class Outbox(Base):
-    __tablename__ = "outbox"
+    __tablename__ = "outbox_events"
 
     id: Mapped[UUID] = mapped_column(
         SQL_UUID(as_uuid=True),
