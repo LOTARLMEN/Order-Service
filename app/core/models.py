@@ -33,8 +33,8 @@ class Order(BaseModel):
     status_history: list[OrderStatusHistory]
 
 
-class EventTypeEnum(StrEnum):
-    ORDER_CREATED = "ORDER.CREATED"
+class OutboxEventTypeEnum(StrEnum):
+    ORDER_CREATED = "order.created"
 
 
 class OutboxEventStatus(StrEnum):
@@ -44,7 +44,18 @@ class OutboxEventStatus(StrEnum):
 
 class OutboxEvent(BaseModel):
     id: UUID
-    event_type: EventTypeEnum
+    event_type: OutboxEventTypeEnum
     payload: dict
     status: OutboxEventStatus
+    created_at: datetime
+
+
+class InboxEventTypeEnum(StrEnum):
+    ORDER_SHIPPED = "order.shipped"
+    ORDER_CANCELLED = "order.cancelled"
+
+
+class InboxEvent(BaseModel):
+    order_id: UUID
+    event_type: InboxEventTypeEnum
     created_at: datetime
