@@ -10,7 +10,7 @@ from app.core.models import (
     OrderStatusHistory,
 )
 from app.infrastructure.db.database_schemas.order import Order as DBOrder
-from app.infrastructure.db.database_schemas.order import OrderStatus
+from app.infrastructure.db.database_schemas.order import OrderStatus as DBOrderStatus
 from app.infrastructure.db.repositories.base import BaseRepository
 from app.infrastructure.db.repositories.exeptions import DoesNotExist
 from app.infrastructure.db.repositories.order.order_dto import OrderDTO
@@ -51,7 +51,7 @@ class OrderRepository(BaseRepository):
 
         order_result = (await self._session.execute(stmt_order)).scalar()
 
-        stmt_status = insert(OrderStatus).values(
+        stmt_status = insert(DBOrderStatus).values(
             {
                 "user_id": order_result.id,
                 "status": order.status,
@@ -63,11 +63,20 @@ class OrderRepository(BaseRepository):
         order = await self.get_by_id(order_result.id)
         return self._construct(order)
 
-    async def get_by_id(self, order_id: UUID) -> DBOrder:
+    async def get_by_id(self, order_id: UUID) -> Order:
         stmt = select(DBOrder).where(DBOrder.id == order_id)
         order = (await self._session.execute(stmt)).scalar_one_or_none()
 
         if order is None:
             raise ValueError(f"Order with id {order_id} not found")
 
-        return order
+        return self._construct(order)
+
+    async def update_status(self, order_id: UUID, status: OrderStatusEnum) -> None:
+        stmt_update = insert(DBOrderStatus).values(
+            {
+                "user_id": order_id,
+                "status": status,
+            }
+        )
+        await self._session.execute(stmt_update)
