@@ -15,7 +15,7 @@ class NotificationsServiceClient(CapashinoBaseHTTPClient):
 
         notification_response = await self._send_request(
             method="POST",
-            path="/notifications",
+            path=self._client_url,
             json_data=json_data,
         )
         return notification_response
