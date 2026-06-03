@@ -2,15 +2,14 @@ import json
 
 from aiokafka import AIOKafkaProducer
 
-from app.config.config import settings
 from app.infrastructure.services.kafka.producer.producer_dto import (
     KafkaProducerDTO,
 )
 
 
 class KafkaProducerService:
-    def __init__(self):
-        self._url = settings.Kafka.BOOTSTRAP_SERVERS
+    def __init__(self, url: str):
+        self._url = url
         self._producer = None
 
     async def start(self):
