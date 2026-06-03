@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert
 
+from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import (
     OutboxEvent,
     OutboxEventStatus,
@@ -11,7 +12,6 @@ from app.core.models import (
 from app.infrastructure.db.database_schemas.outbox import Outbox as DBOutbox
 from app.infrastructure.db.repositories.base import BaseRepository
 from app.infrastructure.db.repositories.exeptions import DoesNotExist
-from app.infrastructure.db.repositories.outbox.outbox_dto import OutboxEventDTO
 
 
 class OutboxRepository(BaseRepository):
