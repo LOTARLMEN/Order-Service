@@ -7,4 +7,5 @@ class OrderAppConfig(BaseConfig):
     model_config = SettingsConfigDict(env_prefix="ORDER_")
 
     SERVICE_NAME: str
-    SERVICE_URL: str
+    SERVICE_HOST: str
+    SERVICE_PORT: int
