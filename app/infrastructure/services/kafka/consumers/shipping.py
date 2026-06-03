@@ -12,7 +12,7 @@ from app.application.use_cases.exceptions import (
 from app.application.use_cases.process_shipping_event.shipping_event import (
     ProcessShippingEventUseCase,
 )
-from app.core.models import InboxEventTypeEnum
+from app.core.models import OrderEventType
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ class ShippingEventConsumer:
             while self._is_running:
                 res = await self._consumer.getmany(timeout_ms=1000)
 
-                for topic_partition, messages in res.items():
+                for topic_partition, messages in res.item():
                     for msg in messages:
                         if not self._is_running:
                             break
@@ -68,7 +68,7 @@ class ShippingEventConsumer:
         try:
             try:
                 payload = json.loads(msg.value.decode("utf-8"))
-                event_type = InboxEventTypeEnum(payload["event_type"])
+                event_type = OrderEventType(payload["event_type"])
                 order_id = UUID(payload["order_id"])
             except (ValueError, KeyError, TypeError) as parse_err:
                 logger.error(
