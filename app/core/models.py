@@ -6,10 +6,33 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
+class Payment(BaseModel):
+    id: UUID
+    user_id: str
+    order_id: str
+    amount: Decimal
+    idempotency_key: str
+    created_at: datetime
+
+
+class Notification(BaseModel):
+    id: UUID
+    user_id: UUID
+    message: str
+    reference_id: UUID
+    created_at: datetime
+
+
 class Item(BaseModel):
-    id: str
+    id: UUID
     name: str
     price: Decimal
+    qnt: int
+    created_at: datetime
+
+    @property
+    def get_amount(self) -> Decimal:
+        return self.price * self.qnt
 
 
 class OrderStatusEnum(StrEnum):
@@ -27,14 +50,16 @@ class OrderStatusHistory(BaseModel):
 class Order(BaseModel):
     id: UUID
     user_id: str
-    items: list[Item]
-    amount: Decimal
+    item: Item
     status: OrderStatusEnum
+    created_at: datetime
     status_history: list[OrderStatusHistory]
 
 
-class OutboxEventTypeEnum(StrEnum):
+class OrderEventType(StrEnum):
     ORDER_CREATED = "order.created"
+    ORDER_SHIPPED = "order.shipped"
+    ORDER_CANCELLED = "order.cancelled"
 
 
 class OutboxEventStatus(StrEnum):
@@ -44,18 +69,13 @@ class OutboxEventStatus(StrEnum):
 
 class OutboxEvent(BaseModel):
     id: UUID
-    event_type: OutboxEventTypeEnum
+    event_type: OrderEventType
     payload: dict
     status: OutboxEventStatus
     created_at: datetime
 
 
-class InboxEventTypeEnum(StrEnum):
-    ORDER_SHIPPED = "order.shipped"
-    ORDER_CANCELLED = "order.cancelled"
-
-
 class InboxEvent(BaseModel):
     order_id: UUID
-    event_type: InboxEventTypeEnum
+    event_type: OrderEventType
     created_at: datetime
