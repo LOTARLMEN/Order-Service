@@ -1,13 +1,13 @@
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
+from app.application.use_cases.process_shipping_event.inbox_dto import InboxEventDTO
 from app.core.models import (
     InboxEvent,
     InboxEventTypeEnum,
 )
 from app.infrastructure.db.database_schemas.inbox import Inbox as DBInbox
 from app.infrastructure.db.repositories.base import BaseRepository
-from app.infrastructure.db.repositories.inbox.inbox_dto import InboxEventDTO
 
 
 class InboxRepository(BaseRepository):
