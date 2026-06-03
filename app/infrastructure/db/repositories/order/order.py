@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 
+from app.application.use_cases.order_usecases.order_dto import OrderDTO
 from app.core.models import (
     Item,
     Order,
@@ -13,7 +14,6 @@ from app.infrastructure.db.database_schemas.order import Order as DBOrder
 from app.infrastructure.db.database_schemas.order import OrderStatus as DBOrderStatus
 from app.infrastructure.db.repositories.base import BaseRepository
 from app.infrastructure.db.repositories.exeptions import DoesNotExist
-from app.infrastructure.db.repositories.order.order_dto import OrderDTO
 
 
 class OrderRepository(BaseRepository):
