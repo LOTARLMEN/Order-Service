@@ -13,7 +13,7 @@ class DatabaseConfig(BaseConfig):
     DATABASE_NAME: str
 
     @property
-    def DATABASE_URL(self):
+    def URL(self):
         return (
             f"postgresql+asyncpg://{self.USERNAME}:{self.PASSWORD}@"
             f"{self.HOST}:{self.PORT}/{self.DATABASE_NAME}"
