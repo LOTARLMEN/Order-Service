@@ -1,9 +1,7 @@
 from datetime import datetime
-from decimal import Decimal
 from uuid import UUID, uuid4
 
 from sqlalchemy import (
-    DECIMAL,
     INTEGER,
     JSON,
     TEXT,
@@ -29,14 +27,11 @@ class Order(Base):
     user_id: Mapped[str] = mapped_column(
         nullable=False,
     )
-    items: Mapped[dict] = mapped_column(
+    item: Mapped[dict] = mapped_column(
         JSON,
         nullable=False,
     )
-    amount: Mapped[Decimal] = mapped_column(
-        DECIMAL(10, 2),
-        nullable=False,
-    )
+
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
         server_default=func.now(),

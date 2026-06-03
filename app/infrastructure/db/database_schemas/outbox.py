@@ -5,7 +5,7 @@ from sqlalchemy import JSON, TEXT, TIMESTAMP, Index, func
 from sqlalchemy import UUID as SQL_UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.core.models import OutboxEventStatus
+from app.core.models import OrderEventType, OutboxEventStatus
 from app.infrastructure.db.database_schemas.base import Base
 
 
@@ -17,7 +17,7 @@ class Outbox(Base):
         primary_key=True,
         default=uuid4,
     )
-    event_type: Mapped[str] = mapped_column(
+    event_type: Mapped[OrderEventType] = mapped_column(
         TEXT,
         nullable=False,
     )
