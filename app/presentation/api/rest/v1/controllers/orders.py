@@ -1,7 +1,10 @@
 from dependency_injector.wiring import inject
 from fastapi import APIRouter
 
-from .order_create_dto import OrderCreateRequestSchema, OrderCreateResponseSchema
+from app.infrastructure.db.repositories.order.order_create_dto import (
+    OrderCreateRequestSchema,
+    OrderCreateResponseSchema,
+)
 
 router = APIRouter()
 
