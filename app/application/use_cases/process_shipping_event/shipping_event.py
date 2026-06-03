@@ -1,12 +1,12 @@
 from uuid import UUID
 
 from app.application.use_cases.base import BaseUseCase
-from app.application.use_cases.process_shipping_event.exceptions import (
+from app.application.use_cases.exceptions import (
     EventAlreadyExistsException,
     OrderNotExistsException,
 )
+from app.application.use_cases.process_shipping_event.inbox_dto import InboxEventDTO
 from app.core.models import InboxEventTypeEnum, OrderStatusEnum
-from app.infrastructure.db.repositories.inbox.inbox_dto import InboxEventDTO
 
 
 class ProcessShippingEventUseCase(BaseUseCase):
