@@ -1,23 +1,17 @@
 from datetime import datetime
 from uuid import UUID
 
+from app.core.models import Item, OrderStatusEnum
 from pydantic import BaseModel
 
-from app.core.models import OrderStatusEnum
 
-
-class OrderCreateDTO(BaseModel):
+class OrderDTO(BaseModel):
     user_id: str
-    quantity: int
-    item_id: UUID
-    idempotency_key: UUID
+    item: Item
+    status: OrderStatusEnum
 
 
-class OrderCreateRequestSchema(OrderCreateDTO):
-    pass
-
-
-class OrderCreateResponseSchema(BaseModel):
+class OrderResponseDTO(BaseModel):
     id: UUID
     user_id: str
     quantity: int

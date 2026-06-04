@@ -1,16 +1,24 @@
+from uuid import UUID
+
 from app.application.use_cases.base import BaseUseCase
 from app.application.use_cases.order_usecases.exceptions import (
     OrderFailedCreateException,
+    OrderNotFoundException,
     OutboxEventFailedCreateException,
 )
-from app.application.use_cases.order_usecases.order_dto import OrderDTO
+from app.application.use_cases.order_usecases.order_dto import (
+    OrderDTO,
+    OrderResponseDTO,
+)
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import Order, OrderEventType, OrderStatusEnum, OutboxEventStatus
 from app.infrastructure.db.repositories.order.exceptions import (
     ItemNotEnoughException,
     NotItemException,
 )
-from app.infrastructure.db.repositories.order.order_create_dto import OrderCreateDTO
+from app.infrastructure.db.repositories.order.order_create_dto import (
+    OrderCreateRequestSchema,
+)
 from app.infrastructure.services.capashino_services.catalog import CatalogServiceClient
 from app.infrastructure.unit_of_work import UnitOfWork
 
@@ -24,7 +32,7 @@ class CreateOrderUseCase(BaseUseCase):
         super().__init__(unit_of_work)
         self._catalog = catalog_service
 
-    async def __call__(self, order_dto: OrderCreateDTO):
+    async def __call__(self, order_dto: OrderCreateRequestSchema) -> OrderResponseDTO:
         async with self._unit_of_work() as uow:
             item = await self._catalog.get_item(order_dto.item_id)
 
@@ -54,3 +62,35 @@ class CreateOrderUseCase(BaseUseCase):
                 raise OutboxEventFailedCreateException("Failed to create outbox event.")
 
             await uow.commit()
+
+        order_to_response = OrderResponseDTO(
+            id=order.id,
+            user_id=order.user_id,
+            quantity=order.item.qnt,
+            item_id=order.item.id,
+            status=order.status,
+            created_at=order.created_at,
+            update_at=order.status_history[0].created_at,
+        )
+        return order_to_response
+
+
+class GetOrderUseCase(BaseUseCase):
+    async def __call__(self, order_id: UUID) -> OrderResponseDTO:
+        async with self._unit_of_work() as uow:
+            order = await uow.orders.get_by_id(order_id)
+
+            if not order:
+                raise OrderNotFoundException("Order {} not found.".format(order_id))
+
+            order_to_response = OrderResponseDTO(
+                id=order.id,
+                user_id=order.user_id,
+                quantity=order.item.qnt,
+                item_id=order.item.id,
+                status=order.status,
+                created_at=order.created_at,
+                update_at=order.status_history[0].created_at,
+            )
+
+            return order_to_response
