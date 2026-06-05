@@ -2,4 +2,5 @@ set -e
 
 uv run alembic upgrade head
 
-exec uv run python app/main
+export PYTHONPATH=.
+exec uv run python app/main.py

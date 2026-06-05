@@ -1,9 +1,13 @@
 from contextlib import asynccontextmanager
 
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+
+from app.infrastructure.db.repositories.idempotency_key.idempotency_key import (
+    IdempotencyKeyRepository,
+)
 from app.infrastructure.db.repositories.inbox.inbox import InboxRepository
 from app.infrastructure.db.repositories.order.order import OrderRepository
 from app.infrastructure.db.repositories.outbox.outbox import OutboxRepository
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 
 class UnitOfWork:
@@ -29,6 +33,7 @@ class _UnitOfWorkImplementation:
         self._order_repo = OrderRepository(session)
         self._outbox_repo = OutboxRepository(session)
         self._inbox_repo = InboxRepository(session)
+        self._idempotency_key_repo = IdempotencyKeyRepository(session)
 
     @property
     def orders(self):
@@ -41,6 +46,10 @@ class _UnitOfWorkImplementation:
     @property
     def inbox(self):
         return self._inbox_repo
+
+    @property
+    def idempotency_key(self):
+        return self._idempotency_key_repo
 
     async def commit(self):
         await self._session.commit()

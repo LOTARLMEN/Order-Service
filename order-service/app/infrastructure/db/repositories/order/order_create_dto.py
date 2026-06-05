@@ -1,7 +1,8 @@
 from uuid import UUID
 
-from app.application.use_cases.order_usecases.order_dto import OrderResponseDTO
 from pydantic import BaseModel
+
+from app.application.use_cases.order_usecases.order_dto import OrderResponseDTO
 
 
 class OrderCreateRequestSchema(BaseModel):

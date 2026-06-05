@@ -1,8 +1,9 @@
 from typing import Any
 
+from httpx import AsyncClient, ConnectTimeout, HTTPStatusError, Timeout
+
 from app.config.config import settings
 from app.infrastructure.services.exceptions import ProviderError, ProviderTimeout
-from httpx import AsyncClient, ConnectTimeout, HTTPStatusError, Timeout
 
 
 class CapashinoBaseHTTPClient:

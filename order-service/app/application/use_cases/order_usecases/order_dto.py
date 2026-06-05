@@ -1,8 +1,9 @@
 from datetime import datetime
 from uuid import UUID
 
-from app.core.models import Item, OrderStatusEnum
 from pydantic import BaseModel
+
+from app.core.models import Item, OrderStatusEnum
 
 
 class OrderDTO(BaseModel):

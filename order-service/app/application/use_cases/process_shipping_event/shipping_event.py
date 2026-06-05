@@ -6,7 +6,7 @@ from app.application.use_cases.exceptions import (
     OrderNotExistsException,
 )
 from app.application.use_cases.process_shipping_event.inbox_dto import InboxEventDTO
-from app.core.models import InboxEventTypeEnum, OrderStatusEnum
+from app.core.models import OrderEventType, OrderStatusEnum
 
 
 class ProcessShippingEventUseCase(BaseUseCase):
@@ -26,9 +26,9 @@ class ProcessShippingEventUseCase(BaseUseCase):
             if not order:
                 raise OrderNotExistsException("Order not found.")
 
-            if event_type == InboxEventTypeEnum.ORDER_SHIPPED:
+            if event_type == OrderEventType.ORDER_SHIPPED:
                 order.status = OrderStatusEnum.SHIPPED
-            elif event_type == InboxEventTypeEnum.ORDER_CANCELLED:
+            elif event_type == OrderEventType.ORDER_CANCELLED:
                 order.status = OrderStatusEnum.CANCELLED
 
             await uow.orders.update_status(

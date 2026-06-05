@@ -1,6 +1,10 @@
 from http import HTTPStatus
 from uuid import UUID
 
+from dependency_injector.wiring import Provide, inject
+from fastapi import APIRouter, Depends
+from starlette.responses import JSONResponse
+
 from app.application.use_cases.order_usecases.order_create_usecase import (
     CreateOrderUseCase,
     GetOrderUseCase,
@@ -10,11 +14,8 @@ from app.infrastructure.db.repositories.order.order_create_dto import (
     OrderResponseSchema,
 )
 from app.presentation.container import PresentationContainer
-from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends
-from starlette.responses import JSONResponse
 
-router = APIRouter()
+router = APIRouter(prefix="/api/orders")
 
 
 @router.post("", response_model=OrderResponseSchema)
@@ -34,7 +35,7 @@ async def create_order(
         )
 
 
-@router.get("", response_model=OrderResponseSchema)
+@router.get("/{order_id}", response_model=OrderResponseSchema)
 @inject
 async def get_order(
     order_id: UUID,

@@ -1,12 +1,13 @@
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
+
 from app.application.use_cases.process_shipping_event.inbox_dto import InboxEventDTO
 from app.core.models import (
     InboxEvent,
-    InboxEventTypeEnum,
+    OrderEventType,
 )
 from app.infrastructure.db.database_schemas.inbox import Inbox as DBInbox
 from app.infrastructure.db.repositories.base import BaseRepository
-from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
 
 
 class InboxRepository(BaseRepository):
@@ -14,7 +15,7 @@ class InboxRepository(BaseRepository):
     def _construct(db_inbox: DBInbox) -> InboxEvent:
         return InboxEvent(
             order_id=db_inbox.order_id,
-            event_type=InboxEventTypeEnum(db_inbox.event_type),
+            event_type=OrderEventType(db_inbox.event_type),
             created_at=db_inbox.created_at,
         )
 

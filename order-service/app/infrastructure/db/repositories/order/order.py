@@ -1,6 +1,10 @@
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy import select
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm import joinedload
+
 from app.application.use_cases.order_usecases.order_dto import OrderDTO
 from app.core.models import (
     Item,
@@ -11,9 +15,6 @@ from app.core.models import (
 from app.infrastructure.db.database_schemas.order import Order as DBOrder
 from app.infrastructure.db.database_schemas.order import OrderStatus as DBOrderStatus
 from app.infrastructure.db.repositories.base import BaseRepository
-from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import joinedload
 
 
 class OrderRepository(BaseRepository):

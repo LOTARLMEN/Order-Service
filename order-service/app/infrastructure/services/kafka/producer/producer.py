@@ -1,6 +1,7 @@
 import json
 
 from aiokafka import AIOKafkaProducer
+
 from app.infrastructure.services.kafka.producer.producer_dto import (
     KafkaProducerDTO,
 )

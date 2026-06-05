@@ -1,12 +1,14 @@
 FROM ghcr.io/astral-sh/uv:python3.12-alpine
 
-WORKDIR /app
+WORKDIR /order-service
 
-COPY pyproject.toml uv.lock ./
+RUN apk add --no-cache gcc musl-dev zlib-dev
+
+COPY ./pyproject.toml ./uv.lock ./
 
 RUN uv sync --frozen --no-install-project
 
-COPY order-service .
+COPY . .
 
 RUN uv sync --frozen
 

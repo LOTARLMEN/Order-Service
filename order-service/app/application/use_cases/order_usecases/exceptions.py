@@ -12,3 +12,7 @@ class OutboxEventFailedCreateException(Exception):
 
 class OrderNotFoundException(Exception):
     pass
+
+
+class IdempotencyKeyExistException(Exception):
+    pass

@@ -1,5 +1,6 @@
-from app.config.base_setting import BaseConfig
 from pydantic_settings import SettingsConfigDict
+
+from app.config.base_setting import BaseConfig
 
 
 class DatabaseConfig(BaseConfig):

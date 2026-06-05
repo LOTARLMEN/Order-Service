@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from sqlalchemy import select, update
+
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import (
     OrderEventType,
@@ -8,7 +10,6 @@ from app.core.models import (
 )
 from app.infrastructure.db.database_schemas.outbox import Outbox as DBOutbox
 from app.infrastructure.db.repositories.base import BaseRepository
-from sqlalchemy import select, update
 
 
 class OutboxRepository(BaseRepository):

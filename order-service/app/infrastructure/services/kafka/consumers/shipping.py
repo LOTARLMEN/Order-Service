@@ -4,6 +4,7 @@ from asyncio import CancelledError, create_task, sleep
 from uuid import UUID
 
 from aiokafka import AIOKafkaConsumer
+
 from app.application.use_cases.exceptions import (
     EventAlreadyExistsException,
     OrderNotExistsException,

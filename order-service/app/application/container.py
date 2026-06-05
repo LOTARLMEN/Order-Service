@@ -1,3 +1,5 @@
+from dependency_injector import containers, providers
+
 from app.application.use_cases.order_usecases.order_create_usecase import (
     CreateOrderUseCase,
     GetOrderUseCase,
@@ -10,15 +12,14 @@ from app.application.use_cases.process_shipping_event.shipping_event import (
 )
 from app.infrastructure.container import InfrastructureContainer
 from app.infrastructure.services.kafka.consumers.shipping import ShippingEventConsumer
-from dependency_injector import containers, providers
 
 
 class ApplicationContainer(containers.DeclarativeContainer):
-    setting = providers.Configuration()
+    settings = providers.Configuration()
 
     infrastructure_container = providers.Container[InfrastructureContainer](
         InfrastructureContainer,
-        setting=setting,
+        settings=settings,
     )
 
     unit_of_work = infrastructure_container.unit_of_work
@@ -43,6 +44,6 @@ class ApplicationContainer(containers.DeclarativeContainer):
 
     shipping_consumer = providers.Singleton[ShippingEventConsumer](
         ShippingEventConsumer,
-        url=setting.Kafka.BOOTSTRAP_SERVERS,
+        url=settings.Kafka.BOOTSTRAP_SERVERS,
         process_shipping_event_use_case=process_shipping_event_use_case,
     )

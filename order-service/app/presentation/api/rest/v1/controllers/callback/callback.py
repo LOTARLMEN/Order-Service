@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from .callback_dto import PaymentCallbackDTO
 
-router = APIRouter(prefix="/payment-callback")
+router = APIRouter(prefix="/api/orders/payment-callback")
 
 
 @router.post("")

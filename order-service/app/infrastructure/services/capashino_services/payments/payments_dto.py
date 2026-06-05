@@ -1,8 +1,9 @@
 from decimal import Decimal
 from uuid import UUID
 
-from app.config.config import settings
 from pydantic import BaseModel
+
+from app.config.config import settings
 
 
 class PaymentDTO(BaseModel):

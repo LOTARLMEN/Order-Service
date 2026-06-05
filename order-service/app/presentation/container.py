@@ -1,7 +1,8 @@
+from dependency_injector import containers, providers
+
 from app.application.container import ApplicationContainer
 from app.config.config import settings
 from app.presentation.outbox_worker import OutboxWorker
-from dependency_injector import containers, providers
 
 
 class PresentationContainer(containers.DeclarativeContainer):

@@ -1,12 +1,13 @@
 from asyncio import create_task, run
 from typing import Callable
 
-from app.presentation.api.rest.lifespan import lifespan
-from app.presentation.api.rest.v1.controllers import callback, orders
-from app.presentation.api.rest.v1.router import router as orders_router
-from app.presentation.container import PresentationContainer
 from fastapi import FastAPI
 from uvicorn import Config, Server
+
+from app.presentation.api.rest.lifespan import lifespan
+from app.presentation.api.rest.v1.controllers import callback, orders
+from app.presentation.api.rest.v1.router import router
+from app.presentation.container import PresentationContainer
 
 
 def build_app(
@@ -15,16 +16,16 @@ def build_app(
 ) -> FastAPI:
     app = FastAPI(
         lifespan=lifespan,
-        title=container.settings.OrderService.SERVICE_NAME,
+        title=container.settings().OrderService.SERVICE_NAME,
     )
-    app.include_router(orders_router)
+    app.include_router(router)
     container.wire(modules=[orders, callback])
     return app
 
 
 async def main():
     presentation_container = PresentationContainer()
-    setting = presentation_container.settings
+    setting = presentation_container.settings()
 
     app = build_app(
         presentation_container,
