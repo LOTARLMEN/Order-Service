@@ -58,7 +58,7 @@ class CreateOrderUseCase(BaseUseCase):
             order = await uow.orders.create(
                 OrderDTO(
                     user_id=order_dto.user_id,
-                    item=item,
+                    item=item.model_dump(),
                     status=OrderStatusEnum.NEW,
                 )
             )

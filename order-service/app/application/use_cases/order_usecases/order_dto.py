@@ -3,12 +3,12 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from app.core.models import Item, OrderStatusEnum
+from app.core.models import OrderStatusEnum
 
 
 class OrderDTO(BaseModel):
     user_id: str
-    item: Item
+    item: dict
     status: OrderStatusEnum
 
 
