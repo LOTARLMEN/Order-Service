@@ -40,7 +40,7 @@ class CreateOrderUseCase(BaseUseCase):
 
         async with self._unit_of_work() as uow:
             try:
-                await uow.idempotency.create(order_dto.idempotency_key)
+                await uow.idempotency_key.create(order_dto.idempotency_key)
             except IntegrityError:
                 existing = await uow.idempotency_key.get(order_dto.idempotency_key)
 
