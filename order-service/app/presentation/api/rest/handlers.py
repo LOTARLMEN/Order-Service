@@ -1,7 +1,11 @@
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
 
+from app.application.use_cases.order_usecases.exceptions import (
+    IdempotencyKeyExistException,
+)
 from app.infrastructure.db.repositories.order.exceptions import ItemNotEnoughException
 
 
@@ -15,10 +19,49 @@ async def validation_error_handler(
     )
 
 
-async def not_item_error_handler(
+async def item_not_enough_handler(
     request: Request,
     exc: ItemNotEnoughException,
 ):
     return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST, content={"detail": exc}
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": str(exc)},
     )
+
+
+async def idempotency_key_conflict_handler(
+    request: Request,
+    exc: IdempotencyKeyExistException,
+):
+    return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content={"detail": "Idempotency key already used"},
+    )
+
+
+async def integrity_error_handler(
+    request: Request,
+    exc: IntegrityError,
+):
+    return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content={"detail": "Duplicate key violation"},
+    )
+
+
+async def general_exception_handler(
+    request: Request,
+    exc: Exception,
+):
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "Internal server error"},
+    )
+
+
+handlers_mapping = {
+    RequestValidationError: validation_error_handler,
+    ItemNotEnoughException: item_not_enough_handler,
+    IdempotencyKeyExistException: idempotency_key_conflict_handler,
+    IntegrityError: integrity_error_handler,
+}

@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from uvicorn import Config, Server
 
 from app.infrastructure.logging import setup_logging
+from app.presentation.api.rest.handlers import handlers_mapping
 from app.presentation.api.rest.lifespan import lifespan
 from app.presentation.api.rest.v1.controllers import callback, orders
 from app.presentation.api.rest.v1.router import router
@@ -22,6 +23,10 @@ def build_app(
     )
     app.include_router(router)
     container.wire(modules=[orders, callback])
+
+    for exc_class, handler in handlers_mapping.items():
+        app.add_exception_handler(exc_class, handler)
+
     return app
 
 
