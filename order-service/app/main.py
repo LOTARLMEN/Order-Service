@@ -16,7 +16,7 @@ def build_app(
 ) -> FastAPI:
     app = FastAPI(
         lifespan=lifespan,
-        title=container.settings().OrderService.SERVICE_NAME,
+        title=container.settings()["OrderService"]["SERVICE_NAME"],
     )
     app.include_router(router)
     container.wire(modules=[orders, callback])
@@ -25,6 +25,7 @@ def build_app(
 
 async def main():
     presentation_container = PresentationContainer()
+
     setting = presentation_container.settings()
 
     app = build_app(
@@ -36,8 +37,8 @@ async def main():
         Server(
             Config(
                 app,
-                host=setting.OrderService.SERVICE_HOST,
-                port=setting.OrderService.SERVICE_PORT,
+                host=setting["OrderService"]["SERVICE_HOST"],
+                port=setting["OrderService"]["SERVICE_PORT"],
             )
         ).serve()
     )

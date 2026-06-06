@@ -2,8 +2,7 @@ from urllib.parse import urljoin
 from uuid import UUID
 
 from app.core.models import Item
-
-from .base import CapashinoBaseHTTPClient
+from app.infrastructure.services.capashino_services.base import CapashinoBaseHTTPClient
 
 
 class CatalogServiceClient(CapashinoBaseHTTPClient):

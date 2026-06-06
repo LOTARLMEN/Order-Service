@@ -1,3 +1,4 @@
+from pydantic import computed_field
 from pydantic_settings import SettingsConfigDict
 
 from app.config.base_setting import BaseConfig
@@ -12,8 +13,9 @@ class DatabaseConfig(BaseConfig):
     PASSWORD: str
     DATABASE_NAME: str
 
+    @computed_field
     @property
-    def URL(self):
+    def URL(self) -> str:
         return (
             f"postgresql+asyncpg://{self.USERNAME}:{self.PASSWORD}@"
             f"{self.HOST}:{self.PORT}/{self.DATABASE_NAME}"

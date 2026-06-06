@@ -35,6 +35,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
     create_order_use_case = providers.Singleton[CreateOrderUseCase](
         CreateOrderUseCase,
         unit_of_work=unit_of_work,
+        catalog_service=infrastructure_container.catalog_service,
     )
 
     get_order_use_case = providers.Singleton[GetOrderUseCase](

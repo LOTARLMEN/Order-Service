@@ -14,7 +14,7 @@ class CapashinoBaseHTTPClient:
         self._client_name = client_name
         self._client = AsyncClient(
             base_url=self.__base_url,
-            headers={"X-API-KEY": self.__x_api_key},
+            headers={"x-api-key": self.__x_api_key},
             follow_redirects=True,
             timeout=Timeout(10.0, connect=5),
         )
