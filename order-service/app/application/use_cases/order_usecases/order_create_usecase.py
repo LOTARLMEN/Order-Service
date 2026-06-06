@@ -42,7 +42,7 @@ class CreateOrderUseCase(BaseUseCase):
             try:
                 await uow.idempotency.create(order_dto.idempotency_key)
             except IntegrityError:
-                existing = await uow.idempotency.get(order_dto.idempotency_key)
+                existing = await uow.idempotency_key.get(order_dto.idempotency_key)
 
                 if existing and existing.response:
                     return OrderResponseDTO.model_validate(existing.response)
