@@ -1,3 +1,4 @@
+import logging
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
@@ -22,6 +23,8 @@ from app.infrastructure.db.repositories.order.order_create_dto import (
 from app.infrastructure.services.capashino_services.catalog import CatalogServiceClient
 from app.infrastructure.unit_of_work import UnitOfWork
 
+logger = logging.getLogger(__name__)
+
 
 class CreateOrderUseCase(BaseUseCase):
     def __init__(
@@ -33,7 +36,10 @@ class CreateOrderUseCase(BaseUseCase):
         self._catalog = catalog_service
 
     async def __call__(self, order_dto: OrderCreateRequestSchema) -> OrderResponseDTO:
+
+        logger.info("Order dto: {}".format(order_dto.model_dump()))
         item = await self._catalog.get_item(order_dto.item_id)
+        logger.info("Item from catalog service: {}".format(item.model_dump()))
 
         if item.available_qty < order_dto.quantity:
             raise ItemNotEnoughException("Not enough items.")

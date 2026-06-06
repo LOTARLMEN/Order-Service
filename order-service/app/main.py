@@ -4,6 +4,7 @@ from typing import Callable
 from fastapi import FastAPI
 from uvicorn import Config, Server
 
+from app.infrastructure.logging import setup_logging
 from app.presentation.api.rest.lifespan import lifespan
 from app.presentation.api.rest.v1.controllers import callback, orders
 from app.presentation.api.rest.v1.router import router
@@ -14,6 +15,7 @@ def build_app(
     container: PresentationContainer,
     lifespan: Callable,
 ) -> FastAPI:
+    setup_logging()
     app = FastAPI(
         lifespan=lifespan,
         title=container.settings()["OrderService"]["SERVICE_NAME"],

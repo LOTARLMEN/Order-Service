@@ -5,9 +5,9 @@ from app.config.config import settings
 
 
 def setup_logging():
-    log_level = getattr(logging, settings.logger.LOG_LEVEL)
-    log_format = settings.logger.LOG_FORMAT
-    date_format = settings.logger.LOG_DATE_FORMAT
+    log_level = getattr(logging, settings.Logging.LOG_LEVEL)
+    log_format = settings.Logging.LOG_FORMAT
+    date_format = settings.Logging.LOG_DATE_FORMAT
 
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(log_level)
