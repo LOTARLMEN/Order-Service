@@ -16,7 +16,7 @@ from app.presentation.container import PresentationContainer
 router = APIRouter(prefix="/api/orders")
 
 
-@router.post("", response_model=OrderResponseSchema)
+@router.post("", response_model=OrderResponseSchema, status_code=201)
 @inject
 async def create_order(
     order: OrderCreateRequestSchema,
