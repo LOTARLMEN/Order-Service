@@ -35,7 +35,7 @@ class CreateOrderUseCase(BaseUseCase):
     async def __call__(self, order_dto: OrderCreateRequestSchema) -> OrderResponseDTO:
         item = await self._catalog.get_item(order_dto.item_id)
 
-        if item.qnt < order_dto.quantity:
+        if item.available_qty < order_dto.quantity:
             raise ItemNotEnoughException("Not enough items.")
 
         async with self._unit_of_work() as uow:
@@ -97,7 +97,7 @@ class GetOrderUseCase(BaseUseCase):
             order_to_response = OrderResponseDTO(
                 id=order.id,
                 user_id=order.user_id,
-                quantity=order.item.qnt,
+                quantity=order.item.available_qty,
                 item_id=order.item.id,
                 status=order.status,
                 created_at=order.created_at,

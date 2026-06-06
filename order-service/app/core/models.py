@@ -27,12 +27,12 @@ class Item(BaseModel):
     id: UUID
     name: str
     price: Decimal
-    qnt: int
+    available_qty: int
     created_at: datetime
 
     @property
     def get_amount(self) -> Decimal:
-        return self.price * self.qnt
+        return self.price * self.available_qty
 
 
 class OrderStatusEnum(StrEnum):
