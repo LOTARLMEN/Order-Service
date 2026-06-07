@@ -54,6 +54,7 @@ async def idempotency_key_conflict_handler(
     request: Request,
     exc: IdempotencyKeyExistException,
 ):
+    logger.warning("Idempotency key conflict: %s", str(exc))
     return JSONResponse(
         status_code=status.HTTP_409_CONFLICT,
         content={"detail": "Idempotency key already used"},
@@ -64,6 +65,7 @@ async def integrity_error_handler(
     request: Request,
     exc: IntegrityError,
 ):
+    logger.error("Database integrity error: %s", str(exc))
     return JSONResponse(
         status_code=status.HTTP_409_CONFLICT,
         content={"detail": "Duplicate key violation"},
