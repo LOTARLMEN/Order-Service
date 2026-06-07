@@ -74,7 +74,15 @@ class ShippingEventConsumer:
             try:
                 payload = json.loads(raw_payload)
                 event_type = OrderEventType(payload["event_type"])
-                order_id = UUID(payload["order_id"])
+                order_id_str = payload.get("order_id")
+                if not order_id_str:
+                    logger.warning(
+                        "Received message with empty order_id: %s. Skipping.",
+                        raw_payload,
+                    )
+                    await self._consumer.commit()
+                    return
+                order_id = UUID(order_id_str)
             except (ValueError, KeyError, TypeError) as parse_err:
                 logger.error(
                     "Invalid message structure: {}. Skipping.".format(parse_err)
