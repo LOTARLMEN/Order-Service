@@ -44,15 +44,12 @@ async def main():
         lifespan,
     )
 
-    # Start Kafka Producer
     kafka_producer = infrastructure_container.kafka_producer()
     await kafka_producer.start()
 
-    # Start Outbox Worker
     outbox_worker = presentation_container.outbox_worker()
     outbox_task = create_task(outbox_worker.start())
 
-    # Start Shipping Event Consumer
     shipping_consumer = application_container.shipping_consumer()
     shipping_task = create_task(shipping_consumer.start())
 

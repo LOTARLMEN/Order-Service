@@ -106,7 +106,6 @@ class CreateOrderUseCase(BaseUseCase):
             )
 
             try:
-                # Step 4: Send notification for NEW status
                 await self._notification.send_notification(
                     NotificationDTO(
                         user_id=order.user_id,
@@ -119,7 +118,6 @@ class CreateOrderUseCase(BaseUseCase):
                 logger.error("Failed to send notification: %s", str(e))
 
             try:
-                # Step 2: Create payment
                 await self._payment.create_payment(
                     PaymentDTO(
                         order_id=order.id,
@@ -129,7 +127,6 @@ class CreateOrderUseCase(BaseUseCase):
                 )
             except Exception as e:
                 logger.error("Failed to create payment: %s", str(e))
-                # Update status to CANCELLED if payment creation fails
                 await uow.orders.update_status(
                     order_id=order.id, status=OrderStatusEnum.CANCELLED
                 )

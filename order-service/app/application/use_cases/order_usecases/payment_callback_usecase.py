@@ -47,7 +47,6 @@ class ProcessPaymentCallbackUseCase(BaseUseCase):
                 new_status = OrderStatusEnum.PAID
                 notification_msg = "PAID: Ваш заказ успешно оплачен и готов к отправке"
 
-                # Step 3: Add outbox event for order.paid
                 await uow.outbox.create(
                     OutboxEventDTO(
                         idempotency_key="{}_paid".format(order.id),
@@ -72,7 +71,6 @@ class ProcessPaymentCallbackUseCase(BaseUseCase):
             await uow.orders.update_status(order_id=order.id, status=new_status)
 
             try:
-                # Step 4: Send notification
                 await self._notification.send_notification(
                     NotificationDTO(
                         user_id=order.user_id,
