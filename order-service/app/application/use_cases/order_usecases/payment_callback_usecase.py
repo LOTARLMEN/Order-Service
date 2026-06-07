@@ -73,8 +73,9 @@ class ProcessPaymentCallbackUseCase(BaseUseCase):
                 # Step 4: Send notification
                 await self._notification.send_notification(
                     NotificationDTO(
+                        user_id=order.user_id,
                         message=notification_msg,
-                        reference_id=order.id,
+                        reference_id=str(order.id),
                         idempotency_key="{}_{}".format(order.id, new_status.lower()),
                     )
                 )
