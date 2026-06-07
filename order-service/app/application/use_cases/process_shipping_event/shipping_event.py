@@ -5,28 +5,17 @@ from app.application.use_cases.base import BaseUseCase
 from app.application.use_cases.exceptions import (
     OrderNotExistsException,
 )
+from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.application.use_cases.process_shipping_event.inbox_dto import InboxEventDTO
-from app.core.models import OrderEventType, OrderStatusEnum
-from app.infrastructure.services.capashino_services.notifications.notifications import (
-    NotificationsServiceClient,
-)
+from app.core.models import OrderEventType, OrderStatusEnum, OutboxEventStatus
 from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
     NotificationDTO,
 )
-from app.infrastructure.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
 
 class ProcessShippingEventUseCase(BaseUseCase):
-    def __init__(
-        self,
-        unit_of_work: UnitOfWork,
-        notification_service: NotificationsServiceClient,
-    ):
-        super().__init__(unit_of_work)
-        self._notification = notification_service
-
     async def __call__(self, order_id: UUID, event_type: str):
         async with self._unit_of_work() as uow:
             event_dto = InboxEventDTO(
@@ -63,19 +52,21 @@ class ProcessShippingEventUseCase(BaseUseCase):
                 status=new_status,
             )
 
-            try:
-                if notification_msg:
-                    await self._notification.send_notification(
-                        NotificationDTO(
+            if notification_msg:
+                await uow.outbox.create(
+                    OutboxEventDTO(
+                        idempotency_key="{}_{}".format(order.id, new_status.lower()),
+                        event_type=OrderEventType.NOTIFICATION_SEND,
+                        payload=NotificationDTO(
                             user_id=order.user_id,
                             message=notification_msg,
                             reference_id=str(order.id),
                             idempotency_key="{}_{}".format(
                                 order.id, new_status.lower()
                             ),
-                        )
+                        ).model_dump(mode="json"),
+                        status=OutboxEventStatus.PENDING,
                     )
-            except Exception as e:
-                logger.error("Failed to send notification: %s", str(e))
+                )
 
             await uow.commit()

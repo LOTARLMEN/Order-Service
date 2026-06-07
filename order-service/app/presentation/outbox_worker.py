@@ -21,7 +21,7 @@ class OutboxWorker:
             except Exception as e:
                 logger.error("Error in outbox worker loop: %s", str(e))
 
-            await asyncio.sleep(5)
+            await asyncio.sleep(1)
 
     async def stop(self):
         self._is_running = False

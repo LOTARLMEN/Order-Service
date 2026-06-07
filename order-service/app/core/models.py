@@ -62,6 +62,7 @@ class OrderEventType(StrEnum):
     ORDER_PAID = "order.paid"
     ORDER_SHIPPED = "order.shipped"
     ORDER_CANCELLED = "order.cancelled"
+    NOTIFICATION_SEND = "notification.send"
 
 
 class OutboxEventStatus(StrEnum):

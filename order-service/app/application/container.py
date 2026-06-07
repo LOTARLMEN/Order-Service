@@ -30,6 +30,7 @@ class ApplicationContainer(containers.DeclarativeContainer):
         OutboxEventsUseCase,
         unit_of_work=unit_of_work,
         kafka_producer=infrastructure_container.kafka_producer,
+        notification_service=infrastructure_container.notification_service,
     )
     process_shipping_event_use_case = providers.Singleton[ProcessShippingEventUseCase](
         ProcessShippingEventUseCase,

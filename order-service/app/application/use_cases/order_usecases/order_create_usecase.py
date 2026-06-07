@@ -22,9 +22,6 @@ from app.infrastructure.db.repositories.order.order_create_dto import (
     OrderCreateRequestSchema,
 )
 from app.infrastructure.services.capashino_services.catalog import CatalogServiceClient
-from app.infrastructure.services.capashino_services.notifications.notifications import (
-    NotificationsServiceClient,
-)
 from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
     NotificationDTO,
 )
@@ -45,12 +42,10 @@ class CreateOrderUseCase(BaseUseCase):
         unit_of_work: UnitOfWork,
         catalog_service: CatalogServiceClient,
         payment_service: PaymentServiceClient,
-        notification_service: NotificationsServiceClient,
     ):
         super().__init__(unit_of_work)
         self._catalog = catalog_service
         self._payment = payment_service
-        self._notification = notification_service
 
     async def __call__(self, order_dto: OrderCreateRequestSchema) -> OrderResponseDTO:
 
@@ -105,22 +100,24 @@ class CreateOrderUseCase(BaseUseCase):
                 response.model_dump(mode="json"),
             )
 
-            try:
-                await self._notification.send_notification(
-                    NotificationDTO(
+            await uow.outbox.create(
+                OutboxEventDTO(
+                    idempotency_key="{}_new".format(order_dto.idempotency_key),
+                    event_type=OrderEventType.NOTIFICATION_SEND,
+                    payload=NotificationDTO(
                         user_id=order.user_id,
                         message="NEW: Ваш заказ создан и ожидает оплаты",
                         reference_id=str(order.id),
                         idempotency_key="{}_new".format(order_dto.idempotency_key),
-                    )
+                    ).model_dump(mode="json"),
+                    status=OutboxEventStatus.PENDING,
                 )
-            except Exception as e:
-                logger.error("Failed to send notification: %s", str(e))
+            )
 
             try:
                 await self._payment.create_payment(
                     PaymentDTO(
-                        order_id=order.id,
+                        order_id=str(order.id),
                         amount=item.price * order_dto.quantity,
                         idempotency_key=order_dto.idempotency_key,
                     )
@@ -148,7 +145,7 @@ class GetOrderUseCase(BaseUseCase):
             order_to_response = OrderResponseDTO(
                 id=order.id,
                 user_id=order.user_id,
-                quantity=order.item.available_qty,
+                quantity=order.quantity,
                 item_id=order.item.id,
                 status=order.status,
                 created_at=order.created_at,
