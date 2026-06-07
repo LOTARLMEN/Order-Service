@@ -45,7 +45,7 @@ class ProcessPaymentCallbackUseCase(BaseUseCase):
 
             if callback_dto.status == "succeeded":
                 new_status = OrderStatusEnum.PAID
-                notification_msg = "Ваш заказ успешно оплачен и готов к отправке"
+                notification_msg = "PAID: Ваш заказ успешно оплачен и готов к отправке"
 
                 # Step 3: Add outbox event for order.paid
                 await uow.outbox.create(
@@ -65,7 +65,9 @@ class ProcessPaymentCallbackUseCase(BaseUseCase):
             else:
                 new_status = OrderStatusEnum.CANCELLED
                 reason = callback_dto.error_message or "Payment failed"
-                notification_msg = "Ваш заказ отменен. Причина: {}".format(reason)
+                notification_msg = "CANCELLED: Ваш заказ отменен. Причина: {}".format(
+                    reason
+                )
 
             await uow.orders.update_status(order_id=order.id, status=new_status)
 

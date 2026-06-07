@@ -110,7 +110,7 @@ class CreateOrderUseCase(BaseUseCase):
                 await self._notification.send_notification(
                     NotificationDTO(
                         user_id=order.user_id,
-                        message="Ваш заказ создан и ожидает оплаты",
+                        message="NEW: Ваш заказ создан и ожидает оплаты",
                         reference_id=str(order.id),
                         idempotency_key="{}_new".format(order_dto.idempotency_key),
                     )

@@ -49,10 +49,10 @@ class ProcessShippingEventUseCase(BaseUseCase):
             notification_msg = None
             if event_type == OrderEventType.ORDER_SHIPPED:
                 new_status = OrderStatusEnum.SHIPPED
-                notification_msg = "Ваш заказ отправлен в доставку"
+                notification_msg = "SHIPPED: Ваш заказ отправлен в доставку"
             elif event_type == OrderEventType.ORDER_CANCELLED:
                 new_status = OrderStatusEnum.CANCELLED
-                notification_msg = "Ваш заказ отменен. Причина: Insufficient stock"  # Default reason for shipping cancellation
+                notification_msg = "CANCELLED: Ваш заказ отменен. Причина: Insufficient stock"  # Default reason for shipping cancellation
             else:
                 return
 
