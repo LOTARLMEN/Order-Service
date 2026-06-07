@@ -78,14 +78,14 @@ class CreateOrderUseCase(BaseUseCase):
                 OutboxEventDTO(
                     idempotency_key=order_dto.idempotency_key,
                     event_type=OrderEventType.ORDER_CREATED,
-                    payload=response.model_dump(),
+                    payload=response.model_dump(mode="json"),
                     status=OutboxEventStatus.PENDING,
                 )
             )
 
             await uow.idempotency_key.set_response(
                 order_dto.idempotency_key,
-                response.model_dump(),
+                response.model_dump(mode="json"),
             )
 
             await uow.commit()
