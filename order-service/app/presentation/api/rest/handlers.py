@@ -17,6 +17,23 @@ async def validation_error_handler(
     request: Request,
     exc: RequestValidationError,
 ):
+    try:
+        body = await request.body()
+        logger.error(
+            "Validation error for %s %s. Body: %s, Errors: %s",
+            request.method,
+            request.url,
+            body.decode("utf-8", errors="ignore"),
+            exc.errors(),
+        )
+    except Exception:
+        logger.error(
+            "Validation error for %s %s. Errors: %s",
+            request.method,
+            request.url,
+            exc.errors(),
+        )
+
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"detail": exc.errors()},
