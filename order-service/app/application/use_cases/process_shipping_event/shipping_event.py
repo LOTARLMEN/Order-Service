@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 class ProcessShippingEventUseCase(BaseUseCase):
     async def __call__(self, order_id: UUID, event_type: str):
+        logger.info("Processing shipping event: %s for order %s", event_type, order_id)
         async with self._unit_of_work() as uow:
             event_dto = InboxEventDTO(
                 order_id=order_id,

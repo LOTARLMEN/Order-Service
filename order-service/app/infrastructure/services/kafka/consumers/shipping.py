@@ -67,8 +67,10 @@ class ShippingEventConsumer:
 
     async def _process_message(self, msg):
         try:
+            raw_payload = msg.value.decode("utf-8")
+            logger.info("Received message from Kafka: %s", raw_payload)
             try:
-                payload = json.loads(msg.value.decode("utf-8"))
+                payload = json.loads(raw_payload)
                 event_type = OrderEventType(payload["event_type"])
                 order_id = UUID(payload["order_id"])
             except (ValueError, KeyError, TypeError) as parse_err:
