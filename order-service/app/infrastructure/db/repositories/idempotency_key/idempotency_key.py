@@ -10,10 +10,11 @@ from app.infrastructure.db.repositories.idempotency_key.exceptions import (
 class IdempotencyKeyRepository(BaseRepository):
     async def create(self, key: str):
         try:
-            entity = IdempotencyKey(idempotency_key=key)
-            self._session.add(entity)
-            await self._session.flush()
-            return entity
+            async with self._session.begin_nested():
+                entity = IdempotencyKey(idempotency_key=key)
+                self._session.add(entity)
+                await self._session.flush()
+                return entity
         except IntegrityError:
             raise IdempotencyKeyAlreadyExistsError
 
