@@ -26,6 +26,7 @@ class OrderRepository(BaseRepository):
             id=db_order.id,
             user_id=db_order.user_id,
             item=Item(**db_order.item),
+            quantity=db_order.quantity,
             status=OrderStatusEnum(db_order.statuses[0].status),
             created_at=db_order.created_at,
             status_history=[
@@ -40,8 +41,8 @@ class OrderRepository(BaseRepository):
         db_order = DBOrder(
             user_id=order.user_id,
             item=Item(**order.item).model_dump(mode="json"),
+            quantity=order.quantity,
         )
-
         self._session.add(db_order)
         await self._session.flush()
 

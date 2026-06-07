@@ -1,3 +1,4 @@
+import asyncio
 from asyncio import create_task, run
 from typing import Callable
 
@@ -32,6 +33,8 @@ def build_app(
 
 async def main():
     presentation_container = PresentationContainer()
+    application_container = presentation_container.application_container
+    infrastructure_container = application_container.infrastructure_container
 
     setting = presentation_container.settings()
 
@@ -39,6 +42,18 @@ async def main():
         presentation_container,
         lifespan,
     )
+
+    # Start Kafka Producer
+    kafka_producer = infrastructure_container.kafka_producer()
+    await kafka_producer.start()
+
+    # Start Outbox Worker
+    outbox_worker = presentation_container.outbox_worker()
+    outbox_task = create_task(outbox_worker.start())
+
+    # Start Shipping Event Consumer
+    shipping_consumer = application_container.shipping_consumer()
+    shipping_task = create_task(shipping_consumer.start())
 
     api_task = create_task(
         Server(
@@ -50,7 +65,12 @@ async def main():
         ).serve()
     )
 
-    await api_task
+    try:
+        await asyncio.gather(api_task, outbox_task, shipping_task)
+    finally:
+        await kafka_producer.stop()
+        await outbox_worker.stop()
+        await shipping_consumer.stop()
 
 
 if __name__ == "__main__":

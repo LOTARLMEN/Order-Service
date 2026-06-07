@@ -13,6 +13,7 @@ from app.application.use_cases.process_shipping_event.shipping_event import (
     ProcessShippingEventUseCase,
 )
 from app.core.models import OrderEventType
+from app.config.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class ShippingEventConsumer:
     ):
         self._use_case = process_shipping_event_use_case
         self._url = url
-        self._topic = "student_system-shipment.events"
+        self._topic = settings.Kafka.SHIPMENT_EVENTS_TOPIC
 
         self._group_id = "order_service_shipping_group"
         self._consumer = None
@@ -50,7 +51,7 @@ class ShippingEventConsumer:
             while self._is_running:
                 res = await self._consumer.getmany(timeout_ms=1000)
 
-                for topic_partition, messages in res.item():
+                for topic_partition, messages in res.items():
                     for msg in messages:
                         if not self._is_running:
                             break

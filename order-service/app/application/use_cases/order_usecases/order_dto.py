@@ -9,6 +9,7 @@ from app.core.models import OrderStatusEnum
 class OrderDTO(BaseModel):
     user_id: str
     item: dict
+    quantity: int
     status: OrderStatusEnum
 
 

@@ -5,6 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from sqlalchemy.orm import sessionmaker
 
 from app.infrastructure.services.capashino_services.catalog import CatalogServiceClient
+from app.infrastructure.services.capashino_services.notifications.notifications import (
+    NotificationsServiceClient,
+)
+from app.infrastructure.services.capashino_services.payments.payments import (
+    PaymentServiceClient,
+)
 from app.infrastructure.services.kafka.producer.producer import KafkaProducerService
 from app.infrastructure.unit_of_work import UnitOfWork
 
@@ -26,3 +32,7 @@ class InfrastructureContainer(containers.DeclarativeContainer):
         url=settings.Kafka.BOOTSTRAP_SERVERS,
     )
     catalog_service = providers.Singleton[CatalogServiceClient](CatalogServiceClient)
+    payment_service = providers.Singleton[PaymentServiceClient](PaymentServiceClient)
+    notification_service = providers.Singleton[NotificationsServiceClient](
+        NotificationsServiceClient
+    )

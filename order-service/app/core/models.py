@@ -51,6 +51,7 @@ class Order(BaseModel):
     id: UUID
     user_id: str
     item: Item
+    quantity: int
     status: OrderStatusEnum
     created_at: datetime
     status_history: list[OrderStatusHistory]

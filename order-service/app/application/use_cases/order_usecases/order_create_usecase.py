@@ -22,6 +22,18 @@ from app.infrastructure.db.repositories.order.order_create_dto import (
     OrderCreateRequestSchema,
 )
 from app.infrastructure.services.capashino_services.catalog import CatalogServiceClient
+from app.infrastructure.services.capashino_services.notifications.notifications import (
+    NotificationsServiceClient,
+)
+from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
+    NotificationDTO,
+)
+from app.infrastructure.services.capashino_services.payments.payments import (
+    PaymentServiceClient,
+)
+from app.infrastructure.services.capashino_services.payments.payments_dto import (
+    PaymentDTO,
+)
 from app.infrastructure.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
@@ -32,9 +44,13 @@ class CreateOrderUseCase(BaseUseCase):
         self,
         unit_of_work: UnitOfWork,
         catalog_service: CatalogServiceClient,
+        payment_service: PaymentServiceClient,
+        notification_service: NotificationsServiceClient,
     ):
         super().__init__(unit_of_work)
         self._catalog = catalog_service
+        self._payment = payment_service
+        self._notification = notification_service
 
     async def __call__(self, order_dto: OrderCreateRequestSchema) -> OrderResponseDTO:
 
@@ -60,6 +76,7 @@ class CreateOrderUseCase(BaseUseCase):
                 OrderDTO(
                     user_id=order_dto.user_id,
                     item=item.model_dump(),
+                    quantity=order_dto.quantity,
                     status=OrderStatusEnum.NEW,
                 )
             )
@@ -87,6 +104,35 @@ class CreateOrderUseCase(BaseUseCase):
                 order_dto.idempotency_key,
                 response.model_dump(mode="json"),
             )
+
+            try:
+                # Step 4: Send notification for NEW status
+                await self._notification.send_notification(
+                    NotificationDTO(
+                        message="Ваш заказ создан и ожидает оплаты",
+                        reference_id=order.id,
+                        idempotency_key="{}_new".format(order_dto.idempotency_key),
+                    )
+                )
+            except Exception as e:
+                logger.error("Failed to send notification: %s", str(e))
+
+            try:
+                # Step 2: Create payment
+                await self._payment.create_payment(
+                    PaymentDTO(
+                        order_id=order.id,
+                        amount=item.price * order_dto.quantity,
+                        idempotency_key=order_dto.idempotency_key,
+                    )
+                )
+            except Exception as e:
+                logger.error("Failed to create payment: %s", str(e))
+                # Update status to CANCELLED if payment creation fails
+                await uow.orders.update_status(
+                    order_id=order.id, status=OrderStatusEnum.CANCELLED
+                )
+                response.status = OrderStatusEnum.CANCELLED
 
             await uow.commit()
 

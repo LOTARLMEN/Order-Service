@@ -30,6 +30,10 @@ class Order(Base):
         JSON,
         nullable=False,
     )
+    quantity: Mapped[int] = mapped_column(
+        nullable=False,
+        server_default="1",
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True),
