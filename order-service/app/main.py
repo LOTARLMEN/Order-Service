@@ -8,7 +8,8 @@ from uvicorn import Config, Server
 from app.infrastructure.logging import setup_logging
 from app.presentation.api.rest.handlers import handlers_mapping
 from app.presentation.api.rest.lifespan import lifespan
-from app.presentation.api.rest.v1.controllers import callback, orders
+from app.presentation.api.rest.v1.controllers import orders
+from app.presentation.api.rest.v1.controllers.callback import callback
 from app.presentation.api.rest.v1.router import router
 from app.presentation.container import PresentationContainer
 
