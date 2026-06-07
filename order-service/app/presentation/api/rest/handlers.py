@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
@@ -7,6 +9,8 @@ from app.application.use_cases.order_usecases.exceptions import (
     IdempotencyKeyExistException,
 )
 from app.infrastructure.db.repositories.order.exceptions import ItemNotEnoughException
+
+logger = logging.getLogger(__name__)
 
 
 async def validation_error_handler(
@@ -53,6 +57,7 @@ async def general_exception_handler(
     request: Request,
     exc: Exception,
 ):
+    logger.exception("Unhandled exception occurred: %s", str(exc))
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={"detail": "Internal server error"},
@@ -64,4 +69,5 @@ handlers_mapping = {
     ItemNotEnoughException: item_not_enough_handler,
     IdempotencyKeyExistException: idempotency_key_conflict_handler,
     IntegrityError: integrity_error_handler,
+    Exception: general_exception_handler,
 }
