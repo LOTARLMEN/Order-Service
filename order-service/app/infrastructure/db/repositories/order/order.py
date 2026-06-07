@@ -62,7 +62,7 @@ class OrderRepository(BaseRepository):
             .where(DBOrder.id == order_id)
             .options(joinedload(DBOrder.statuses))
         )
-        order = (await self._session.execute(stmt)).scalar_one_or_none()
+        order = (await self._session.execute(stmt)).unique().scalar_one_or_none()
 
         return self._construct(order)
 
