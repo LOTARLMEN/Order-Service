@@ -1,0 +1,2 @@
+class IdempotencyKeyAlreadyExistsError(Exception):
+    pass

@@ -1,8 +1,6 @@
 from datetime import datetime
-from uuid import UUID
 
-from sqlalchemy import JSON, TIMESTAMP, func
-from sqlalchemy import UUID as SQL_UUID
+from sqlalchemy import JSON, TIMESTAMP, func, TEXT
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.infrastructure.db.database_schemas.base import Base
@@ -11,8 +9,8 @@ from app.infrastructure.db.database_schemas.base import Base
 class IdempotencyKey(Base):
     __tablename__ = "idempotency_keys"
 
-    idempotency_key: Mapped[UUID] = mapped_column(
-        SQL_UUID(as_uuid=True),
+    idempotency_key: Mapped[str] = mapped_column(
+        TEXT,
         primary_key=True,
     )
 

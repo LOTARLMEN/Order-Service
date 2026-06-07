@@ -1,8 +1,6 @@
 import logging
 from uuid import UUID
 
-from sqlalchemy.exc import IntegrityError
-
 from app.application.use_cases.base import BaseUseCase
 from app.application.use_cases.order_usecases.exceptions import (
     IdempotencyKeyExistException,
@@ -14,6 +12,9 @@ from app.application.use_cases.order_usecases.order_dto import (
 )
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import OrderEventType, OrderStatusEnum, OutboxEventStatus
+from app.infrastructure.db.repositories.idempotency_key.exceptions import (
+    IdempotencyKeyAlreadyExistsError,
+)
 from app.infrastructure.db.repositories.order.exceptions import (
     ItemNotEnoughException,
 )
@@ -47,13 +48,13 @@ class CreateOrderUseCase(BaseUseCase):
         async with self._unit_of_work() as uow:
             try:
                 await uow.idempotency_key.create(order_dto.idempotency_key)
-            except IntegrityError:
+            except IdempotencyKeyAlreadyExistsError:
                 existing = await uow.idempotency_key.get(order_dto.idempotency_key)
 
                 if existing and existing.response:
                     return OrderResponseDTO.model_validate(existing.response)
 
-                raise IdempotencyKeyExistException()
+                raise IdempotencyKeyExistException("Idempotency key already exist.")
 
             order = await uow.orders.create(
                 OrderDTO(
@@ -82,7 +83,7 @@ class CreateOrderUseCase(BaseUseCase):
                 )
             )
 
-            await uow.idempotency.set_response(
+            await uow.idempotency_key.set_response(
                 order_dto.idempotency_key,
                 response.model_dump(),
             )
