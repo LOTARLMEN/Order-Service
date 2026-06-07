@@ -8,9 +8,9 @@ Create Date: 2026-06-07 12:50:49.608841
 
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "0a24d6873807"
@@ -42,4 +42,4 @@ def downgrade() -> None:
         type_=sa.UUID(),
         existing_nullable=False,
     )
-    # ### end 
+    # ### end Alembic commands ###

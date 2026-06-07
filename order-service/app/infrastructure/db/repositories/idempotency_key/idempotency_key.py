@@ -23,4 +23,4 @@ class IdempotencyKeyRepository(BaseRepository):
     async def set_response(self, key: str, response: dict):
         obj = await self.get(key)
         if obj:
-            obj.response =
+            obj.response = response
