@@ -9,4 +9,4 @@ class OrderAppConfig(BaseConfig):
     SERVICE_NAME: str
     SERVICE_HOST: str
     SERVICE_PORT: int
-    PAYMENT_CALLBACK_URL: str = "http://order-service.student-system-capashi.svc:8000/api/orders/payment-callback"
+    PAYMENT_CALLBACK_URL: str = "http://order-service.student-system-capashino.svc:8000/api/orders/payment-callback"

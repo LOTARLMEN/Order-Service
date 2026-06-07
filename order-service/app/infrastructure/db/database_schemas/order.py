@@ -49,10 +49,16 @@ class Order(Base):
 class OrderStatus(Base):
     __tablename__ = "order_statuses"
 
+    id: Mapped[UUID] = mapped_column(
+        SQL_UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid4,
+        unique=True,
+    )
     order_id: Mapped[UUID] = mapped_column(
         SQL_UUID(as_uuid=True),
         ForeignKey("orders.id", ondelete="CASCADE"),
-        primary_key=True,
+        nullable=False,
     )
     status: Mapped[str] = mapped_column(
         TEXT,
