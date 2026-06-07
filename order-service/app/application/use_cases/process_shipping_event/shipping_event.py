@@ -56,13 +56,15 @@ class ProcessShippingEventUseCase(BaseUseCase):
             if notification_msg:
                 await uow.outbox.create(
                     OutboxEventDTO(
-                        idempotency_key="{}_{}".format(order.id, new_status.lower()),
+                        idempotency_key="ntf_{}_{}".format(
+                            order.id, new_status.lower()
+                        ),
                         event_type=OrderEventType.NOTIFICATION_SEND,
                         payload=NotificationDTO(
                             user_id=order.user_id,
                             message=notification_msg,
                             reference_id=str(order.id),
-                            idempotency_key="{}_{}".format(
+                            idempotency_key="ntf_{}_{}".format(
                                 order.id, new_status.lower()
                             ),
                         ).model_dump(mode="json"),

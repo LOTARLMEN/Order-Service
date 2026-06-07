@@ -36,7 +36,7 @@ class ProcessPaymentCallbackUseCase(BaseUseCase):
 
                 await uow.outbox.create(
                     OutboxEventDTO(
-                        idempotency_key="{}_paid".format(order.id),
+                        idempotency_key="evt_paid_{}".format(order.id),
                         event_type=OrderEventType.ORDER_PAID,
                         payload={
                             "event_type": OrderEventType.ORDER_PAID,
@@ -59,13 +59,15 @@ class ProcessPaymentCallbackUseCase(BaseUseCase):
 
             await uow.outbox.create(
                 OutboxEventDTO(
-                    idempotency_key="{}_{}".format(order.id, new_status.lower()),
+                    idempotency_key="ntf_{}_{}".format(order.id, new_status.lower()),
                     event_type=OrderEventType.NOTIFICATION_SEND,
                     payload=NotificationDTO(
                         user_id=order.user_id,
                         message=notification_msg,
                         reference_id=str(order.id),
-                        idempotency_key="{}_{}".format(order.id, new_status.lower()),
+                        idempotency_key="ntf_{}_{}".format(
+                            order.id, new_status.lower()
+                        ),
                     ).model_dump(mode="json"),
                     status=OutboxEventStatus.PENDING,
                 )

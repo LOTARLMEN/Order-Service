@@ -88,7 +88,7 @@ class CreateOrderUseCase(BaseUseCase):
 
             await uow.outbox.create(
                 OutboxEventDTO(
-                    idempotency_key=order_dto.idempotency_key,
+                    idempotency_key="evt_created_{}".format(order_dto.idempotency_key),
                     event_type=OrderEventType.ORDER_CREATED,
                     payload=response.model_dump(mode="json"),
                     status=OutboxEventStatus.PENDING,
@@ -102,13 +102,13 @@ class CreateOrderUseCase(BaseUseCase):
 
             await uow.outbox.create(
                 OutboxEventDTO(
-                    idempotency_key="{}_new".format(order_dto.idempotency_key),
+                    idempotency_key="ntf_new_{}".format(order_dto.idempotency_key),
                     event_type=OrderEventType.NOTIFICATION_SEND,
                     payload=NotificationDTO(
                         user_id=order.user_id,
                         message="NEW: Ваш заказ создан и ожидает оплаты",
                         reference_id=str(order.id),
-                        idempotency_key="{}_new".format(order_dto.idempotency_key),
+                        idempotency_key="ntf_new_{}".format(order_dto.idempotency_key),
                     ).model_dump(mode="json"),
                     status=OutboxEventStatus.PENDING,
                 )
