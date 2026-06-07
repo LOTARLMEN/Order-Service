@@ -28,6 +28,7 @@ class OutboxRepository(BaseRepository):
     async def create(self, event: OutboxEventDTO) -> OutboxEvent | None:
         db_outbox_event = DBOutbox(
             event_type=event.event_type,
+            idempotency_key=event.idempotency_key,
             payload=event.payload,
             status=event.status,
         )

@@ -22,6 +22,11 @@ class Outbox(Base):
         TEXT,
         nullable=False,
     )
+    idempotency_key: Mapped[str] = mapped_column(
+        TEXT,
+        nullable=False,
+        unique=True,
+    )
     payload: Mapped[dict] = mapped_column(
         JSON,
         nullable=False,
