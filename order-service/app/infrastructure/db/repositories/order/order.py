@@ -39,7 +39,7 @@ class OrderRepository(BaseRepository):
     async def create(self, order: OrderDTO) -> Order | None:
         db_order = DBOrder(
             user_id=order.user_id,
-            item=order.item,
+            item=Item(**order.item).model_dump(mode="json"),
         )
 
         self._session.add(db_order)
