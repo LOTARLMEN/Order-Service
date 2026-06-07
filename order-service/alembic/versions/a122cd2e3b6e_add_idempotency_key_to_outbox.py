@@ -26,8 +26,10 @@ def upgrade() -> None:
         "outbox_events", sa.Column("idempotency_key", sa.TEXT(), nullable=True)
     )
     # Populate existing rows with a unique value (using the record's id)
-    op.execute("UPDATE outbox_events SET idempotency_key = id::text WHERE idempotency_key IS NULL")
-    
+    op.execute(
+        "UPDATE outbox_events SET idempotency_key = id::text WHERE idempotency_key IS NULL"
+    )
+
     op.alter_column("outbox_events", "idempotency_key", nullable=False)
     op.create_unique_constraint(None, "outbox_events", ["idempotency_key"])
     # ### end Alembic commands ###
