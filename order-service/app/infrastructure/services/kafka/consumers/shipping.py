@@ -28,7 +28,7 @@ class ShippingEventConsumer:
         self._url = url
         self._topic = settings.Kafka.SHIPMENT_EVENTS_TOPIC
 
-        self._group_id = "order_service_shipping_group"
+        self._group_id = "student_lotarlmen_order_service_shipping_group"
         self._consumer = None
         self._is_running = False
         self._task = None
@@ -40,6 +40,8 @@ class ShippingEventConsumer:
             group_id=self._group_id,
             auto_offset_reset="earliest",
             enable_auto_commit=False,
+            session_timeout_ms=30000,  # Increase to 30s
+            heartbeat_interval_ms=10000,  # Increase to 10s
         )
         await self._consumer.start()
         self._is_running = True
