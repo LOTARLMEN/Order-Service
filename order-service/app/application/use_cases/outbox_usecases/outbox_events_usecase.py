@@ -23,6 +23,12 @@ class OutboxEventsUseCase(BaseUseCase):
 
             for event in events:
                 try:
+                    logger.info(
+                        "Publishing event %s (type: %s) to topic %s",
+                        event.id,
+                        event.event_type,
+                        settings.Kafka.ORDER_EVENTS_TOPIC,
+                    )
                     await self._kafka_producer.send_message(
                         KafkaProducerDTO(
                             topic=settings.Kafka.ORDER_EVENTS_TOPIC,
@@ -31,7 +37,13 @@ class OutboxEventsUseCase(BaseUseCase):
                         )
                     )
                     await uow.outbox.update(event.id)
+                    logger.info("Successfully published and updated event %s", event.id)
                 except Exception as e:
-                    logger.error("Failed to publish event %s: %s", event.id, str(e))
+                    logger.error(
+                        "Failed to publish event %s: %s",
+                        event.id,
+                        str(e),
+                        exc_info=True,
+                    )
 
             await uow.commit()

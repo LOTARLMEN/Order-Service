@@ -39,7 +39,7 @@ class OutboxRepository(BaseRepository):
     async def get_pending_events(self, limit: int = 100) -> list[OutboxEvent | None]:
         stmt = (
             select(DBOutbox)
-            .where(DBOutbox.event_type == OutboxEventStatus.PENDING)
+            .where(DBOutbox.status == OutboxEventStatus.PENDING)
             .limit(limit)
             .with_for_update(skip_locked=True)
         )
