@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import (
@@ -26,15 +27,19 @@ class OutboxRepository(BaseRepository):
         )
 
     async def create(self, event: OutboxEventDTO) -> OutboxEvent | None:
-        db_outbox_event = DBOutbox(
-            event_type=event.event_type,
-            idempotency_key=event.idempotency_key,
-            payload=event.payload,
-            status=event.status,
-        )
-        self._session.add(db_outbox_event)
-        await self._session.flush()
-        return self._construct(db_outbox_event)
+        try:
+            async with self._session.begin_nested():
+                db_outbox_event = DBOutbox(
+                    event_type=event.event_type,
+                    idempotency_key=event.idempotency_key,
+                    payload=event.payload,
+                    status=event.status,
+                )
+                self._session.add(db_outbox_event)
+                await self._session.flush()
+                return self._construct(db_outbox_event)
+        except IntegrityError:
+            return None
 
     async def get_pending_events(self, limit: int = 100) -> list[OutboxEvent | None]:
         stmt = (
