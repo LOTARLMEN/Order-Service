@@ -35,7 +35,6 @@ class ApplicationContainer(containers.DeclarativeContainer):
     process_shipping_event_use_case = providers.Singleton[ProcessShippingEventUseCase](
         ProcessShippingEventUseCase,
         unit_of_work=unit_of_work,
-        notification_service=infrastructure_container.notification_service,
     )
 
     create_order_use_case = providers.Singleton[CreateOrderUseCase](
@@ -43,7 +42,6 @@ class ApplicationContainer(containers.DeclarativeContainer):
         unit_of_work=unit_of_work,
         catalog_service=infrastructure_container.catalog_service,
         payment_service=infrastructure_container.payment_service,
-        notification_service=infrastructure_container.notification_service,
     )
 
     get_order_use_case = providers.Singleton[GetOrderUseCase](
@@ -56,7 +54,6 @@ class ApplicationContainer(containers.DeclarativeContainer):
     ](
         ProcessPaymentCallbackUseCase,
         unit_of_work=unit_of_work,
-        notification_service=infrastructure_container.notification_service,
     )
 
     shipping_consumer = providers.Singleton[ShippingEventConsumer](
