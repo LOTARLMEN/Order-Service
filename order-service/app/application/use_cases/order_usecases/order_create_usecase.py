@@ -3,24 +3,18 @@ from uuid import UUID
 
 from app.application.use_cases.base import BaseUseCase
 from app.application.use_cases.order_usecases.exceptions import (
+    IdempotencyKeyAlreadyExistsError,
     IdempotencyKeyExistException,
+    ItemNotEnoughException,
     OrderNotFoundException,
 )
 from app.application.use_cases.order_usecases.order_dto import (
+    OrderCreateRequestSchema,
     OrderDTO,
     OrderResponseDTO,
 )
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import OrderEventType, OrderStatusEnum, OutboxEventStatus
-from app.infrastructure.db.repositories.idempotency_key.exceptions import (
-    IdempotencyKeyAlreadyExistsError,
-)
-from app.infrastructure.db.repositories.order.exceptions import (
-    ItemNotEnoughException,
-)
-from app.infrastructure.db.repositories.order.order_create_dto import (
-    OrderCreateRequestSchema,
-)
 from app.infrastructure.services.capashino_services.catalog import CatalogServiceClient
 from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
     NotificationDTO,
@@ -49,9 +43,9 @@ class CreateOrderUseCase(BaseUseCase):
 
     async def __call__(self, order_dto: OrderCreateRequestSchema) -> OrderResponseDTO:
 
-        logger.info("Order dto: {}".format(order_dto.model_dump()))
+        logger.info("Order dto: %s", order_dto.model_dump())
         item = await self._catalog.get_item(order_dto.item_id)
-        logger.info("Item from catalog service: {}".format(item.model_dump()))
+        logger.info("Item from catalog service: %s", item.model_dump())
 
         if item.available_qty < order_dto.quantity:
             raise ItemNotEnoughException("Not enough items.")
@@ -128,6 +122,23 @@ class CreateOrderUseCase(BaseUseCase):
                     order_id=order.id, status=OrderStatusEnum.CANCELLED
                 )
                 response.status = OrderStatusEnum.CANCELLED
+                await uow.outbox.create(
+                    OutboxEventDTO(
+                        idempotency_key="ntf_cancelled_{}".format(
+                            order_dto.idempotency_key
+                        ),
+                        event_type=OrderEventType.NOTIFICATION_SEND,
+                        payload=NotificationDTO(
+                            user_id=order.user_id,
+                            message="CANCELLED: Ошибка при создании платежа",
+                            reference_id=str(order.id),
+                            idempotency_key="ntf_cancelled_{}".format(
+                                order_dto.idempotency_key
+                            ),
+                        ).model_dump(mode="json"),
+                        status=OutboxEventStatus.PENDING,
+                    )
+                )
 
             await uow.commit()
 

@@ -21,3 +21,14 @@ class OrderResponseDTO(BaseModel):
     status: OrderStatusEnum
     created_at: datetime
     update_at: datetime
+
+
+class OrderResponseSchema(OrderResponseDTO):
+    pass
+
+
+class OrderCreateRequestSchema(BaseModel):
+    user_id: str
+    quantity: int
+    item_id: UUID
+    idempotency_key: str

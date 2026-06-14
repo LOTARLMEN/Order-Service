@@ -7,7 +7,7 @@ from app.application.use_cases.order_usecases.payment_callback_usecase import (
 )
 from app.presentation.container import PresentationContainer
 
-from .callback_dto import PaymentCallbackDTO
+from app.application.use_cases.order_usecases.callback_dto import PaymentCallbackDTO
 
 logger = logging.getLogger(__name__)
 

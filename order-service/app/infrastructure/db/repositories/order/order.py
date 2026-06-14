@@ -18,22 +18,29 @@ from app.infrastructure.db.repositories.base import BaseRepository
 
 
 class OrderRepository(BaseRepository):
-    @staticmethod
-    def _construct(db_order: DBOrder | None) -> Order | None:
+    def _construct(self, db_order: DBOrder | None) -> Order | None:
         if not db_order:
             return None
+
+        # Explicitly sort statuses by created_at and id descending to ensure the latest is first
+        sorted_db_statuses = sorted(
+            db_order.statuses,
+            key=lambda s: (s.created_at, s.id),
+            reverse=True,
+        )
+
         return Order(
             id=db_order.id,
             user_id=db_order.user_id,
             item=Item(**db_order.item),
             quantity=db_order.quantity,
-            status=OrderStatusEnum(db_order.statuses[0].status),
+            status=OrderStatusEnum(sorted_db_statuses[0].status),
             created_at=db_order.created_at,
             status_history=[
                 OrderStatusHistory(
                     status=OrderStatusEnum(s.status), created_at=s.created_at
                 )
-                for s in db_order.statuses
+                for s in sorted_db_statuses
             ],
         )
 

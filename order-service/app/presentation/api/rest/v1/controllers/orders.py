@@ -7,7 +7,7 @@ from app.application.use_cases.order_usecases.order_create_usecase import (
     CreateOrderUseCase,
     GetOrderUseCase,
 )
-from app.infrastructure.db.repositories.order.order_create_dto import (
+from app.application.use_cases.order_usecases.order_dto import (
     OrderCreateRequestSchema,
     OrderResponseSchema,
 )

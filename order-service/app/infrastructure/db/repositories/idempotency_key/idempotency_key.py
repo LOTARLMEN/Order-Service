@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError
 
 from app.infrastructure.db.database_schemas.idempotency import IdempotencyKey
 from app.infrastructure.db.repositories.base import BaseRepository
-from app.infrastructure.db.repositories.idempotency_key.exceptions import (
+from app.application.use_cases.order_usecases.exceptions import (
     IdempotencyKeyAlreadyExistsError,
 )
 

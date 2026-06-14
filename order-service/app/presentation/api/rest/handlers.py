@@ -7,8 +7,8 @@ from sqlalchemy.exc import IntegrityError
 
 from app.application.use_cases.order_usecases.exceptions import (
     IdempotencyKeyExistException,
+    ItemNotEnoughException,
 )
-from app.infrastructure.db.repositories.order.exceptions import ItemNotEnoughException
 
 logger = logging.getLogger(__name__)
 

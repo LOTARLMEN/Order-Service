@@ -42,7 +42,7 @@ class Order(Base):
     statuses: Mapped[list["OrderStatus"]] = relationship(
         "OrderStatus",
         back_populates="order",
-        order_by="OrderStatus.created_at.desc()",
+        order_by=lambda: [OrderStatus.created_at.desc(), OrderStatus.id.desc()],
     )
 
 

@@ -3,6 +3,7 @@ from uuid import UUID
 
 from app.application.use_cases.base import BaseUseCase
 from app.application.use_cases.exceptions import (
+    EventAlreadyExistsException,
     OrderNotExistsException,
 )
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
@@ -27,7 +28,9 @@ class ProcessShippingEventUseCase(BaseUseCase):
                 logger.warning(
                     "Event %s for order %s already exists", event_type, order_id
                 )
-                return
+                raise EventAlreadyExistsException(
+                    "Event %s for order %s already exists" % (event_type, order_id)
+                )
 
             await uow.inbox.create(event=event_dto)
 

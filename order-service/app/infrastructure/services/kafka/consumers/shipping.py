@@ -62,7 +62,7 @@ class ShippingEventConsumer:
         except CancelledError:
             logger.info("ShippingEventConsumer cancelled")
         except Exception as e:
-            logger.error("Unexpected error in consumer loop: {}".format(e))
+            logger.error("Unexpected error in consumer loop: %s", e)
         finally:
             logger.info("ShippingEventConsumer finished.")
             await self._consumer.stop()
@@ -85,7 +85,7 @@ class ShippingEventConsumer:
                 order_id = UUID(order_id_str)
             except (ValueError, KeyError, TypeError) as parse_err:
                 logger.error(
-                    "Invalid message structure: {}. Skipping.".format(parse_err)
+                    "Invalid message structure: %s. Skipping.", parse_err
                 )
                 await self._consumer.commit()
                 return
@@ -99,12 +99,12 @@ class ShippingEventConsumer:
 
             except (EventAlreadyExistsException, OrderNotExistsException) as biz_err:
                 logger.warning(
-                    "Business exception: {}. Commiting offset.".format(biz_err)
+                    "Business exception: %s. Commiting offset.", biz_err
                 )
                 await self._consumer.commit()
 
         except Exception as e:
-            logger.error("Unexpected error in consumer loop: {}".format(e))
+            logger.error("Unexpected error in consumer loop: %s", e)
             await sleep(5)
 
     async def stop(self):

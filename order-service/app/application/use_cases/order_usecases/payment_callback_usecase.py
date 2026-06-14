@@ -8,7 +8,7 @@ from app.core.models import OrderEventType, OrderStatusEnum, OutboxEventStatus
 from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
     NotificationDTO,
 )
-from app.presentation.api.rest.v1.controllers.callback.callback_dto import (
+from app.application.use_cases.order_usecases.callback_dto import (
     PaymentCallbackDTO,
 )
 

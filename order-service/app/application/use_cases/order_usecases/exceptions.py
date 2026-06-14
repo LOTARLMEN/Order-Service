@@ -16,3 +16,11 @@ class OrderNotFoundException(Exception):
 
 class IdempotencyKeyExistException(Exception):
     pass
+
+
+class ItemNotEnoughException(Exception):
+    pass
+
+
+class IdempotencyKeyAlreadyExistsError(Exception):
+    pass
