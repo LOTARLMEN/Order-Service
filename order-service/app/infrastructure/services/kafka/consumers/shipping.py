@@ -84,9 +84,7 @@ class ShippingEventConsumer:
                     return
                 order_id = UUID(order_id_str)
             except (ValueError, KeyError, TypeError) as parse_err:
-                logger.error(
-                    "Invalid message structure: %s. Skipping.", parse_err
-                )
+                logger.error("Invalid message structure: %s. Skipping.", parse_err)
                 await self._consumer.commit()
                 return
 
@@ -98,9 +96,7 @@ class ShippingEventConsumer:
                 await self._consumer.commit()
 
             except (EventAlreadyExistsException, OrderNotExistsException) as biz_err:
-                logger.warning(
-                    "Business exception: %s. Commiting offset.", biz_err
-                )
+                logger.warning("Business exception: %s. Commiting offset.", biz_err)
                 await self._consumer.commit()
 
         except Exception as e:
