@@ -1,6 +1,6 @@
-from app.infrastructure.unit_of_work import UnitOfWork
+from app.application.interfaces import IUnitOfWork
 
 
 class BaseUseCase:
-    def __init__(self, unit_of_work: UnitOfWork):
+    def __init__(self, unit_of_work: IUnitOfWork):
         self._unit_of_work = unit_of_work

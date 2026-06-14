@@ -9,9 +9,7 @@ from app.application.use_cases.exceptions import (
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.application.use_cases.process_shipping_event.inbox_dto import InboxEventDTO
 from app.core.models import OrderEventType, OrderStatusEnum, OutboxEventStatus
-from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
-    NotificationDTO,
-)
+from app.application.dto.notifications import NotificationDTO
 
 logger = logging.getLogger(__name__)
 

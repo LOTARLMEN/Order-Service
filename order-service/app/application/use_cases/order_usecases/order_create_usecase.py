@@ -15,17 +15,13 @@ from app.application.use_cases.order_usecases.order_dto import (
 )
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import OrderEventType, OrderStatusEnum, OutboxEventStatus
-from app.infrastructure.services.capashino_services.catalog import CatalogServiceClient
-from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
-    NotificationDTO,
+from app.application.dto.notifications import NotificationDTO
+from app.application.dto.payments import PaymentDTO
+from app.application.interfaces import (
+    ICatalogServiceClient,
+    IPaymentServiceClient,
+    IUnitOfWork,
 )
-from app.infrastructure.services.capashino_services.payments.payments import (
-    PaymentServiceClient,
-)
-from app.infrastructure.services.capashino_services.payments.payments_dto import (
-    PaymentDTO,
-)
-from app.infrastructure.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +29,9 @@ logger = logging.getLogger(__name__)
 class CreateOrderUseCase(BaseUseCase):
     def __init__(
         self,
-        unit_of_work: UnitOfWork,
-        catalog_service: CatalogServiceClient,
-        payment_service: PaymentServiceClient,
+        unit_of_work: IUnitOfWork,
+        catalog_service: ICatalogServiceClient,
+        payment_service: IPaymentServiceClient,
     ):
         super().__init__(unit_of_work)
         self._catalog = catalog_service

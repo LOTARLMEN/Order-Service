@@ -1,6 +1,6 @@
 from app.infrastructure.services.capashino_services.base import CapashinoBaseHTTPClient
 
-from .payments_dto import PaymentDTO
+from app.application.dto.payments import PaymentDTO
 
 
 class PaymentServiceClient(CapashinoBaseHTTPClient):

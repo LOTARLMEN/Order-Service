@@ -5,9 +5,7 @@ from app.application.use_cases.base import BaseUseCase
 from app.application.use_cases.order_usecases.exceptions import OrderNotFoundException
 from app.application.use_cases.outbox_usecases.outbox_dto import OutboxEventDTO
 from app.core.models import OrderEventType, OrderStatusEnum, OutboxEventStatus
-from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
-    NotificationDTO,
-)
+from app.application.dto.notifications import NotificationDTO
 from app.application.use_cases.order_usecases.callback_dto import (
     PaymentCallbackDTO,
 )

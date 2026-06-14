@@ -3,15 +3,13 @@ import logging
 from app.application.use_cases.base import BaseUseCase
 from app.config.config import settings
 from app.core.models import OrderEventType
-from app.infrastructure.services.capashino_services.notifications.notifications import (
-    NotificationsServiceClient,
+from app.application.dto.notifications import NotificationDTO
+from app.application.dto.kafka import KafkaProducerDTO
+from app.application.interfaces import (
+    IKafkaProducerService,
+    INotificationsServiceClient,
+    IUnitOfWork,
 )
-from app.infrastructure.services.capashino_services.notifications.notifications_dto import (
-    NotificationDTO,
-)
-from app.infrastructure.services.kafka.producer.producer import KafkaProducerService
-from app.infrastructure.services.kafka.producer.producer_dto import KafkaProducerDTO
-from app.infrastructure.unit_of_work import UnitOfWork
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +17,9 @@ logger = logging.getLogger(__name__)
 class OutboxEventsUseCase(BaseUseCase):
     def __init__(
         self,
-        unit_of_work: UnitOfWork,
-        kafka_producer: KafkaProducerService,
-        notification_service: NotificationsServiceClient,
+        unit_of_work: IUnitOfWork,
+        kafka_producer: IKafkaProducerService,
+        notification_service: INotificationsServiceClient,
     ):
         super().__init__(unit_of_work)
         self._kafka_producer = kafka_producer

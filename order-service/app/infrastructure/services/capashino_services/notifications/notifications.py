@@ -1,6 +1,6 @@
 from app.infrastructure.services.capashino_services.base import CapashinoBaseHTTPClient
 
-from .notifications_dto import NotificationDTO
+from app.application.dto.notifications import NotificationDTO
 
 
 class NotificationsServiceClient(CapashinoBaseHTTPClient):
